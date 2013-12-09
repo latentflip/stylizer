@@ -7,5 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Philip Roberts",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "stylus": "~0.41.1",
+    "parent-require": "~1.0.0"
+  }
 }
