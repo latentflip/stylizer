@@ -11,5 +11,6 @@
   "dependencies": {
     "stylus": "~0.41.1",
     "parent-require": "~1.0.0"
-  }
+  },
+  "repository": "git://github.com/latentflip/stylizer.git"
 }
