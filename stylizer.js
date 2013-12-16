@@ -18,7 +18,7 @@ var makeCSSPath = function (stylFile) {
 // options, done
 module.exports = function (infile, outfile, plugins, done) {
     var options;
-    var throwErrors = true; //by default
+    var development = false; //by default
 
     // When called as (options, done) [recommended]
     if (arguments.length === 2 && typeof infile === 'object' && typeof outfile === 'function') {
@@ -30,7 +30,7 @@ module.exports = function (infile, outfile, plugins, done) {
 
         outfile = options.outfile || makeCSSPath(infile);
         plugins = options.plugins || [];
-        if ('throwErrors' in options) throwErrors = options.throwErrors;
+        development = options.development || development;
     }
 
     // When called as (infile, outfile, callback)
@@ -59,14 +59,18 @@ module.exports = function (infile, outfile, plugins, done) {
     }
 
     compiler.render(function (err, css) {
+        var errMessage;
+
         if (err) {
-            var errMessage = cssesc("Stylizer error: \n\n" + err.message, { escapeEverything: true });
-            css = fs.readFileSync(path.join(__dirname, 'error.css'));
-            css = css.toString();
-            css += 'body:before { content: "' + errMessage + '"; }';
+            if (!development) {
+                return done(err);
+            } else {
+                errMessage = cssesc("Stylizer error: \n\n" + err.message, { escapeEverything: true });
+                css = fs.readFileSync(path.join(__dirname, 'error.css')).toString();
+                css += 'body:before { content: "' + errMessage + '"; }';
+            }
         }
 
         fs.writeFile(outfile, css, done);
-        if (err && throwErrors) throw err;
     });
 };

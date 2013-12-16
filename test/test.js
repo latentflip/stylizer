@@ -8,6 +8,16 @@ var tests = {};
 var fixtures = path.join(__dirname, 'fixtures');
 var testfile = path.join(__dirname, 'files', 'test.css');
 
+var test = function (name, fn) {
+    tests[name] = function () {
+        try {
+            fs.unlinkSync(testfile);
+        } catch (e) {
+        }
+        fn.apply(this, arguments);
+    };
+};
+
 // No plugins
 assert.cssMatch = function (actual, expected) {
     expected = fs.readFileSync(expected).toString();
@@ -15,35 +25,35 @@ assert.cssMatch = function (actual, expected) {
     assert.equal(expected, actual);
 };
 
-tests['No plugins array'] = function simple(cb) {
+test('No plugins array', function (cb) {
     var infile = path.join(fixtures, 'simple.styl');
     var expected = path.join(fixtures, 'simple_expected.css');
     stylizer(infile, testfile, function (err) {
         assert.cssMatch(testfile, expected);
         cb();
     });
-};
+});
 
-tests['Empty plugins array'] = function simple(cb) {
+test('Empty plugins array', function (cb) {
     var infile = path.join(fixtures, 'simple.styl');
     var expected = path.join(fixtures, 'simple_expected.css');
     stylizer(infile, testfile, [], function (err) {
         assert.cssMatch(testfile, expected);
         cb();
     });
-};
+});
 
-tests['Nib plugin'] = function simple(cb) {
+test('Nib plugin', function (cb) {
     var infile = path.join(fixtures, 'withnib.styl');
     var expected = path.join(fixtures, 'withnib_expected.css');
     stylizer(infile, testfile, ['nib'], function (err) {
         assert.cssMatch(testfile, expected);
         cb();
     });
-};
+});
 
 
-tests['Option format'] = function simple(cb) {
+test('Option format', function (cb) {
     var infile = path.join(fixtures, 'withnib.styl');
     var expected = path.join(fixtures, 'withnib_expected.css');
     stylizer({
@@ -54,18 +64,19 @@ tests['Option format'] = function simple(cb) {
         assert.cssMatch(testfile, expected);
         cb();
     });
-};
+});
 
 
-tests['With error'] = function simple(cb) {
+test('With error in developmnt', function (cb) {
     var infile = path.join(fixtures, 'witherror.styl');
     var expected = path.join(__dirname, '..', 'error.css');
     stylizer({
         infile: infile,
         outfile: testfile,
-        plugins: ['nib'],
-        throwErrors: false
+        development: true
     }, function (err) {
+        assert.ifError(err);
+
         var basicExpectedCSS = fs.readFileSync(expected).toString();
         var actualCSS = fs.readFileSync(testfile).toString();
 
@@ -77,7 +88,21 @@ tests['With error'] = function simple(cb) {
 
         cb();
     });
-};
+});
+
+
+test('With error', function (cb) {
+    var infile = path.join(fixtures, 'witherror.styl');
+    var expected = path.join(__dirname, '..', 'error.css');
+    stylizer({
+        infile: infile,
+        outfile: testfile,
+        development: false
+    }, function (err) {
+        assert(err, 'Should be an error');
+        cb();
+    });
+});
 
 
 
