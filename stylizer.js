@@ -3,17 +3,44 @@ var fs = require('fs');
 var path = require('path');
 var prequire = require('parent-require');
 var util = require('util');
+var cssesc = require('cssesc');
 
+var makeCSSPath = function (stylFile) {
+    var dir = path.dirname(stylFile);
+    var filename = path.basename(stylFile, path.extname(stylFile));
+    return path.join(dir, filename + '.css');
+};
+
+
+// Can be called as
+// infile, outfile, done
+// infile, outfile, plugins, done
+// options, done
 module.exports = function (infile, outfile, plugins, done) {
+    var options;
+    var throwErrors = true; //by default
 
-    if (!done) {
-        if (typeof plugins === 'function') {
-            done = plugins;
-            plugins = [];
-        }
+    // When called as (options, done) [recommended]
+    if (arguments.length === 2 && typeof infile === 'object' && typeof outfile === 'function') {
+        options = infile;
+        done = outfile;
+
+        if (!options.infile) throw 'infile option required';
+        infile = options.infile;
+
+        outfile = options.outfile || makeCSSPath(infile);
+        plugins = options.plugins || [];
+        if ('throwErrors' in options) throwErrors = options.throwErrors;
+    }
+
+    // When called as (infile, outfile, callback)
+    if (arguments.length == 3 && typeof plugins === 'function') {
+        done = plugins;
+        plugins = [];
     }
 
     var styl = fs.readFileSync(infile);
+
 
     var compiler = stylus(styl.toString())
                     .set('paths', [ path.dirname(infile) ])
@@ -32,8 +59,14 @@ module.exports = function (infile, outfile, plugins, done) {
     }
 
     compiler.render(function (err, css) {
-        if (err) throw err;
+        if (err) {
+            var errMessage = cssesc("Stylizer error: \n\n" + err.message, { escapeEverything: true });
+            css = fs.readFileSync(path.join(__dirname, 'error.css'));
+            css = css.toString();
+            css += 'body:before { content: "' + errMessage + '"; }';
+        }
 
         fs.writeFile(outfile, css, done);
+        if (err && throwErrors) throw err;
     });
 };

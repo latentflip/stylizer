@@ -10,7 +10,12 @@
   "license": "MIT",
   "dependencies": {
     "stylus": "~0.41.1",
-    "parent-require": "~1.0.0"
+    "parent-require": "~1.0.0",
+    "cssesc": "~0.1.0"
   },
-  "repository": "git://github.com/latentflip/stylizer.git"
+  "repository": "git://github.com/latentflip/stylizer.git",
+  "devDependencies": {
+    "async": "~0.2.9",
+    "nib": "~1.0.1"
+  }
 }
