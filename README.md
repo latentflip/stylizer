@@ -14,6 +14,7 @@ stylizer({
     outfile: '/path/to/outfile.css',     // optional, output css file, defaults to infile with .css extension
     plugins: ['nib'],                    // optional, array of stylus compatible plugin module names, default: []
     development: true                    // optional, whether to run in development mode, default: false
+    watch: '/path/to/stylusfiles/**/*.styl' // optional, enable live reload, see below.
 }, function (err) {                      // required, callback to run when built
     console.log('Stylus css written');
 });
@@ -45,7 +46,8 @@ moonbootsConfig = {
                 infile: stylesheetsDir + '/app.styl',
                 outfile: stylesheetsDir + '/app.css',
                 plugins: ['nib'],
-                development: true
+                development: true,
+                watch: stylesheetsDir + '/**/*.styl'
             }, function (err) {
                 if (err) return console.log(err);
                 console.log('CSS written');
@@ -66,6 +68,13 @@ Enabling development mode will:
 
 ![](https://i.cloudup.com/zAbnCO0dNt-3000x3000.png)
 
+* Enable live reload, as below:
+
+### Live reload:
+If `development: true` and `watch:` is defined, live reload events will be sent to connected browsers running the [livereload chrome extension](
+http://feedback.livereload.com/knowledgebase/articles/86242-how-do-i-install-and-use-the-browser-extensions-). This means css will autorefresh without a page reload, which is great for development/prototyping.
+
+Currently, `watch` should be a glob matching your stylus files that you want to be watched, e.g: `/path/to/stylus/files/**/*.styl`.
 
 ## Plugins
 
