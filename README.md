@@ -1,10 +1,14 @@
-### Installation
+# Stylizer
+
+Stylizer makes it super easy to integrate stylus, and stylus plugins, into a node/moonboots project.
+
+## Installation
 
 ```
 npm install stylizer --save
 ```
 
-### Usage:
+## Usage:
 
 ```javascript
 var stylizer = require('stylizer');
@@ -21,7 +25,7 @@ stylizer({
 ```
 
 
-### With moonboots
+## With moonboots
 
 ```javascript
 var templatizer = require('templatizer');
@@ -59,7 +63,7 @@ moonbootsConfig = {
 };
 ```
 
-### Development mode
+## Development mode
 
 Enabling development mode will:
 
@@ -70,7 +74,7 @@ Enabling development mode will:
 
 * Enable live reload, as below:
 
-### Live reload:
+## Live reload:
 If `development: true` and `watch:` is defined, live reload events will be sent to connected browsers running the [livereload chrome extension](
 http://feedback.livereload.com/knowledgebase/articles/86242-how-do-i-install-and-use-the-browser-extensions-). This means css will autorefresh without a page reload, which is great for development/prototyping.
 
