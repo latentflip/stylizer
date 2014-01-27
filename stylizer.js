@@ -11,6 +11,41 @@ var makeCSSPath = function (stylFile) {
     return path.join(dir, filename + '.css');
 };
 
+var livereload = {};
+var startLivereload = function (infile) {
+    if (livereload[infile]) return;
+
+    var tinylr = require('tiny-lr');
+    livereload[infile] = tinylr();
+    livereload[infile].listen(35729, function (err) {
+        if (err) return;
+        console.log('Started livereload on 35729');
+    });
+};
+
+var watching = {};
+var livereloadWatch = function (infile, watchDir) {
+    if (watching[infile]) return;
+
+    console.log('Setting up watch');
+    var gaze = require('gaze');
+
+    gaze(watchDir, function (err, watcher) {
+        watcher.on('all', function (event, filepath) {
+            var lr = livereload[infile];
+            if (lr) {
+                var fakeReq = { body: { files: ['*.css'] }, params: {} };
+                var fakeRes = {};
+                fakeRes.write = fakeRes.end = function noop (){};
+                lr.changed(fakeReq, fakeRes);
+            } else {
+                console.log('CSS changed but livreload is not enabled in your browser');
+            }
+        });
+        watching[infile] = true;
+        console.log('Watching', watchDir);
+    });
+};
 
 // Can be called as
 // infile, outfile, done
@@ -19,6 +54,7 @@ var makeCSSPath = function (stylFile) {
 module.exports = function (infile, outfile, plugins, done) {
     var options;
     var development = false; //by default
+    var watch;
 
     // When called as (options, done) [recommended]
     if (arguments.length === 2 && typeof infile === 'object' && typeof outfile === 'function') {
@@ -31,6 +67,7 @@ module.exports = function (infile, outfile, plugins, done) {
         outfile = options.outfile || makeCSSPath(infile);
         plugins = options.plugins || [];
         development = options.development || development;
+        watch = options.watch || watch;
     }
 
     // When called as (infile, outfile, callback)
@@ -57,6 +94,12 @@ module.exports = function (infile, outfile, plugins, done) {
             compiler.use(p(plugins[plugin]));
         });
     }
+
+    if (development && options.watch) {
+        startLivereload(infile);
+        livereloadWatch(infile, options.watch);
+    }
+
 
     compiler.render(function (err, css) {
         var errMessage;

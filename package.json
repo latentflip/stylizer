@@ -11,7 +11,9 @@
   "dependencies": {
     "stylus": "~0.41.1",
     "parent-require": "~1.0.0",
-    "cssesc": "~0.1.0"
+    "cssesc": "~0.1.0",
+    "tiny-lr": "0.0.5",
+    "gaze": "~0.4.3"
   },
   "repository": "git://github.com/latentflip/stylizer.git",
   "devDependencies": {
