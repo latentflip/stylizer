@@ -11,13 +11,13 @@ var makeCSSPath = function (stylFile) {
     return path.join(dir, filename + '.css');
 };
 
-var livereload = {};
+var livereload;
 var startLivereload = function (infile) {
-    if (livereload[infile]) return;
+    if (livereload) return;
 
     var tinylr = require('tiny-lr');
-    livereload[infile] = tinylr();
-    livereload[infile].listen(35729, function (err) {
+    livereload = tinylr();
+    livereload.listen(35729, function (err) {
         if (err) return;
         console.log('Started livereload on 35729');
     });
@@ -32,12 +32,11 @@ var livereloadWatch = function (infile, watchDir) {
 
     gaze(watchDir, function (err, watcher) {
         watcher.on('all', function (event, filepath) {
-            var lr = livereload[infile];
-            if (lr) {
+            if (livereload) {
                 var fakeReq = { body: { files: ['*.css'] }, params: {} };
                 var fakeRes = {};
                 fakeRes.write = fakeRes.end = function noop (){};
-                lr.changed(fakeReq, fakeRes);
+                livereload.changed(fakeReq, fakeRes);
             } else {
                 console.log('CSS changed but livreload is not enabled in your browser');
             }
