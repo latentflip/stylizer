@@ -4,6 +4,7 @@ var path = require('path');
 var prequire = require('parent-require');
 var util = require('util');
 var cssesc = require('cssesc');
+var request = require('request');
 
 var makeCSSPath = function (stylFile) {
     var dir = path.dirname(stylFile);
@@ -11,15 +12,25 @@ var makeCSSPath = function (stylFile) {
     return path.join(dir, filename + '.css');
 };
 
+var port = 35729;
+
 var livereload = {};
 var startLivereload = function (infile) {
     if (livereload[infile]) return;
 
     var tinylr = require('tiny-lr');
+
+    tinylr.Server.prototype.error = function _error (e) {
+        if (e.code === "EADDRINUSE") {
+            console.log("Looks like livereload server's running already");
+        }
+    };
+
     livereload[infile] = tinylr();
-    livereload[infile].listen(35729, function (err) {
-        if (err) return;
-        console.log('Started livereload on 35729');
+
+    livereload[infile].listen(port, function (err) {
+        if (err) return console.log("Error: ",err);
+        console.log('Started livereload on', port);
     });
 };
 
@@ -32,15 +43,9 @@ var livereloadWatch = function (infile, watchDir) {
 
     gaze(watchDir, function (err, watcher) {
         watcher.on('all', function (event, filepath) {
-            var lr = livereload[infile];
-            if (lr) {
-                var fakeReq = { body: { files: ['*.css'] }, params: {} };
-                var fakeRes = {};
-                fakeRes.write = fakeRes.end = function noop (){};
-                lr.changed(fakeReq, fakeRes);
-            } else {
-                console.log('CSS changed but livreload is not enabled in your browser');
-            }
+            console.log('Changed:', filepath);
+            var url = 'http://localhost:' + port + '/changed?files=meeting.css';
+            request.get(url);
         });
         watching[infile] = true;
         console.log('Watching', watchDir);

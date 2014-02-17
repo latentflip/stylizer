@@ -13,7 +13,8 @@
     "parent-require": "~1.0.0",
     "cssesc": "~0.1.0",
     "tiny-lr": "0.0.5",
-    "gaze": "~0.4.3"
+    "gaze": "~0.4.3",
+    "request": "~2.33.0"
   },
   "repository": "git://github.com/latentflip/stylizer.git",
   "devDependencies": {
