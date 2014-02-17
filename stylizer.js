@@ -5,6 +5,13 @@ var prequire = require('parent-require');
 var util = require('util');
 var cssesc = require('cssesc');
 var request = require('request');
+var tinylr = require('tiny-lr');
+
+tinylr.Server.prototype.error = function _error (e) {
+    if (e.code === "EADDRINUSE") {
+        console.log("Looks like livereload server's running already");
+    }
+};
 
 var makeCSSPath = function (stylFile) {
     var dir = path.dirname(stylFile);
@@ -13,22 +20,15 @@ var makeCSSPath = function (stylFile) {
 };
 
 var port = 35729;
+var livereload;
 
-var livereload = {};
 var startLivereload = function (infile) {
-    if (livereload[infile]) return;
+    if (livereload) return;
 
-    var tinylr = require('tiny-lr');
 
-    tinylr.Server.prototype.error = function _error (e) {
-        if (e.code === "EADDRINUSE") {
-            console.log("Looks like livereload server's running already");
-        }
-    };
+    livereload = tinylr();
 
-    livereload[infile] = tinylr();
-
-    livereload[infile].listen(port, function (err) {
+    livereload.listen(port, function (err) {
         if (err) return console.log("Error: ",err);
         console.log('Started livereload on', port);
     });
