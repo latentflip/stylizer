@@ -29,6 +29,7 @@ test('No plugins array', function (cb) {
     var infile = path.join(fixtures, 'simple.styl');
     var expected = path.join(fixtures, 'simple_expected.css');
     stylizer(infile, testfile, function (err) {
+        if (err) throw err;
         assert.cssMatch(testfile, expected);
         cb();
     });
@@ -47,6 +48,7 @@ test('Nib plugin', function (cb) {
     var infile = path.join(fixtures, 'withnib.styl');
     var expected = path.join(fixtures, 'withnib_expected.css');
     stylizer(infile, testfile, ['nib'], function (err) {
+        if (err) throw err;
         assert.cssMatch(testfile, expected);
         cb();
     });
@@ -69,7 +71,7 @@ test('Option format', function (cb) {
 
 test('With error in developmnt', function (cb) {
     var infile = path.join(fixtures, 'witherror.styl');
-    var expected = path.join(__dirname, '..', 'error.css');
+    var expected = path.join(__dirname, '..', 'lib', 'error.css');
     stylizer({
         infile: infile,
         outfile: testfile,

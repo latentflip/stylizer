@@ -1,0 +1,49 @@
+#!/usr/bin/env node
+
+var path = require('path');
+var parseArgs = require('minimist');
+var stylizer = require('../stylizer');
+
+var argv = parseArgs(process.argv.slice(2), {
+    alias: {
+        f: 'file',
+        o: 'outfile',
+        p: 'plugins'
+    }
+});
+
+var usage = [
+    '  ',
+    '  Stylizer: convert stylus file to css with plugins',
+    '  ',
+    '    Usage examples:',
+    '  ',
+    '      stylizer -f path/to/app.styl -o path/to/app.css',
+    '  ',
+    '      stylizer -f path/to/app.styl -o path/to/app.css -p nib -p otherPlugin',
+    '  ',
+    '      stylizer --file path/to/app.styl --outfile path/to/app.css',
+    '       # as above with longer form of options',
+].join('\n');
+
+
+var file = argv.f;
+var output = argv.o;
+var plugins = argv.p;
+
+if (!plugins) {
+    plugins = [];
+} else if (!Array.isArray(plugins)) {
+    plugins = [ plugins ];
+}
+
+if (!file || !output) {
+    console.log(usage);
+    process.exit(1);
+}
+
+stylizer({
+    infile: path.join(process.cwd(), file),
+    outfile: path.join(process.cwd(), output),
+    plugins: plugins
+});
