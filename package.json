@@ -1,6 +1,6 @@
 {
   "name": "stylizer",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "Philip Roberts",
   "bin": "./bin/cli",
   "dependencies": {
