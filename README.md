@@ -1,6 +1,6 @@
 # Stylizer
 
-Stylizer makes it super easy to integrate stylus, and stylus plugins, into a node/moonboots project.
+Stylizer makes it super easy to integrate [Stylus](https://learnboost.github.io/stylus/), and stylus plugins, into a [Node.js](http://nodejs.org/)/[moonboots](https://github.com/HenrikJoreteg/moonboots) project.
 
 ## Installation
 
