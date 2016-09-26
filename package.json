@@ -5,7 +5,7 @@
   "bin": "./bin/cli",
   "dependencies": {
     "cssesc": "~0.1.0",
-    "gaze": "~0.5.1",
+    "gaze": "~1.1.1",
     "minimist": "^1.1.0",
     "parent-require": "~1.0.0",
     "request": "~2.44.0",
