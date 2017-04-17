@@ -8,7 +8,7 @@
     "gaze": "~1.1.1",
     "minimist": "^1.1.0",
     "parent-require": "~1.0.0",
-    "request": "~2.44.0",
+    "request": "~2.81.0",
     "stylus": "^0.54.5",
     "tiny-lr": "0.1.4"
   },
